@@ -1,0 +1,61 @@
+---
+title: 'Quantitative features in science-popular texts: text difficulty'
+author: "Ksenia Samoylenko"
+date: '17 june 2018 г '
+output: pdf_document
+---
+
+
+### Quantitative features in science-popular texts: text difficulty
+
+Materials
+1027 texts and features (csv)
+
+Introduction
+Science-popular media are really widespread and encompasses all fields of science. I wanted to compare how texts from russian popular science media differ from each other. My researched based on readability studies and suppose exploring a distribution of different readability features with data visualization methods. I have a corpus, which consist of articles and lectures scripts from the most popular scientifical projects in Russia: N+1, postnauka, indicator, polit.ru, cherdak and geektimes.Totally it's 1027 texts. For each text we have 29 variables. The most important for us are: source (media), theme and area. As a rival forms here presented POS-using in different areas and media and readability indexes in the same fields. 
+
+Research hypothesis
+Our main hypothesis supposes, that texts difficulty depends on it's theme: texts about humanities studies are easier than about exact and nature studies.
+To test this hypothesis, we mark our texts with two types of features: theme - smaller unit, where there are special tags for language, culture, physics, math and so on. Area tags are more global and join all small tags. Special types of tags are "technology" and "news", because they aren't suit well for any of other tags or areas.
+Additional hypothesis is that our media has different level of difficulty. 
+
+Data
+Our data is collection of texts on Russian, sourced from online-media devoted to science. It includes articles, news, lecture scripts. Our hypotheses we going to explore with readability features. Totally we have 26 variables, which should help us in this research. For each text we used four groups of features: 
+1) quantitative features: number of words. sentences, average number of words in sentence, syllabs and chars;
+2) readability indexes: FRE, GF, FKG, SMOG, Coliman-Liay, DCH-index. They are bases on quantitative features and fixed for Russian language (cause they were elaborate for English). We suppose, that the bigger is the value of index (except FRE, which is reverse), the more difficult is text.
+3) dictionaries: all texts were compared with lists of common words, rude words, talks and measures (SI-prefixes), sourced from Internet, and we get a percentage of each group of words for each text. We suppose that easy text has a big part of common, talks and rude words, and difficult text is difficult, because it has a lot of SI-prefixes and contain less common and talks words. Moreover we hope, that our research shows that exact science texts contents more ‘measures’.
+4) part-of-speech: we suppose, that text difficulty for reader depends on number of verbs, prepositions and nouns. Easy texts has more verbs, prepositions, and difficult - more nouns. Moreover we wonder, if some special genre like news contains another POS distribution, than scientific texts. 
+Part-of-speech and ‘dictionaries’ values are presented as their percentage in text.
+
+Data collection and annotation
+All texts were obtained by the forces of project “Popular Science Texts Compling research”. All types of variable were get by my Python module; variables “area” and “theme” were annotated manually. 
+Area and thems
+Area ‘exact’ includes physics, math and spase
+‘nature’ - Biology, nature, chemistry
+‘humanity’ – culture, history, society, language, psychology
+R libraries
+
+
+Descriptive analysis
+
+Correlations
+
+
+Regressions
+
+1.1	Theme by source and reverse
+1.2	Difficult by theme|area; by source
+1.3	POS by diff and reverse
+
+
+At least two multi-factor analysis techniques should be demonstrated in the paper
+PCA and variables dependences
+
+
+Difficulty distribution
+
+
+
+
+
+
