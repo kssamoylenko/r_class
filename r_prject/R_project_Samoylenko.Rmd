@@ -8,7 +8,7 @@ output: pdf_document
 
 ### Quantitative features in science-popular texts: text difficulty
 
-#Materials
+# Materials
 1027 texts and features (csv)
 
 Introduction
