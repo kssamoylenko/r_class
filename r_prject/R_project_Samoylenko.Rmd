@@ -66,8 +66,7 @@ scipop %>%
   
 ```
 
-
-!(https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/1%20areas.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/1%20areas.png)
 
 ### 1. Descriptive analysis
 #### 1.1 Thems, areas and sources
@@ -98,6 +97,11 @@ scipop %>%
   scale_fill_brewer(palette="Accent")
   
 ```
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/2%20theme%20source.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/3%20media%20area.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/4%20area%20media.png)
+
+
 Here we already can make some interesting observations. We intentionally reduced number of texts from Зolit.ru because it was very resource-intensive to process them because of their length. 
 Biology is the most popular theme, and we can clearly see that Cherdak is really highly specialized on it. Technology is the most popular theme for Geektimes, and news - for indicator. Generally, Postnauka covers the most part of "humanity" texts and N+1 - of "exact" studies.
 We suppose that this sample is sufficiently representative and shows real thems distribution in our sources. 
@@ -133,6 +137,11 @@ scipop%>%
   labs(title = "Science-popular texts analysis", x = "Area", y = "CLI score")
 ```
 
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/5%20fre.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/6%20dch.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/7%20cli.png)
+
+
 Here we can observe, that somme differnces in readability score are more explocit when we check them in relation to source. For example, texts about technologyes from Postnauka are easier, than from another media; in polit.ru nature texts are more difficult, than about humanities (this fact is the first confirmation for one of our hypothesis.) Bit generally, there is no difference between our media in readability score, only in some special fields of science. 
 
 
@@ -157,6 +166,10 @@ scipop %>%
   labs(title = "Science-popular texts analysis", x = "Common words percentage", y = "CLI")
   
 ```
+
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/10%20cli.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/9%20cli.png)
+
 In this polts we can see, that it's hard to find any special in using common words for media and different areas, perhaps only few texts about technologyes and|or from geektimes are more complex, than others. But we see, that the more common words are in texts, the less is their readability score, which means that there is correlation between this variables.
 
 
@@ -219,6 +232,19 @@ But the most useful for us is the follow function" for plots:
 plot.design(scipop)
 
 ```
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/11%20diff%20chemp.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/12%20word%20length.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/13%20fre.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/14%20smog.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/15%20cli.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/16%20dch.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/17%20gf.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/18%20common.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/19%20talks.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/20%20nouns.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/21%20verbs.png
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/22%20conjs.png)
+
 This function was created for expirements design, and we can get interesting information for each variable distribution in our categories (source, area, theme). It's exactly what we needed!
 
 The most important observations we have with help of this plots:
@@ -256,6 +282,8 @@ sci_correlations
 corrplot(sci_correlations, method="circle", tl.col = "black", col=brewer.pal(n=8, name="PuBuGn"))
 
 ```
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/23%20corr.png)
+
 
 Here we can see, that there are few hightly correlated groups. Correlations with general and average variables are obvious, just like correlations between readability scores and variables in which they are based, Interesting, that not all readability indexes are higtly correlated. There is a small dependency for nouns and common words with other variables. We suppose, that we can abonden some quantitative metrics and analyse our data without any loss.
 
@@ -298,6 +326,7 @@ scipop_num %>%
 
 
 ```
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/24%20sent%20word.png)
 
 It was obvious. And we can see, that the shortest texts are not the easiest. Let's check POS regressions.
 
@@ -325,8 +354,11 @@ scipop_num %>%
   geom_smooth(method='lm', colour = 'orange')+
   theme_bw()
           
-
 ```
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/25%20vebs%20conjs.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/26%20verbs%20commons.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/26%20nouns%20commons.png)
+
 The bigger is number of nouns, the less prepositions we have. On the second plot we can clearly see, that with growing of common words text become easier and numaer of nouns is decreasing. It's a very important observation.
 
 ```
@@ -346,7 +378,8 @@ scipop_num %>%
   theme_bw()
      
 ```
-
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/27%20dch.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/26%20fre.png)
 
 We can confirm some of our previous observation: that the easier text is, the more common words in contents. And there are some POS-dependences. 
 
@@ -395,7 +428,7 @@ scipop%>%
   theme_bw()
 
 ```
-
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/28%20lm.png)
 
 ```fit3=lmer(FRE~verbs+(1|theme),data=scipop)
 summary(fit3)
@@ -439,7 +472,7 @@ scipop%>%
   theme_bw()
   
 ```
-
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/29%20lm.png)
 
 ```
 fit4=lmer(common.words~verbs+(1|theme),data=scipop)
@@ -483,6 +516,9 @@ scipop%>%
   geom_line(aes(verbs,model4))+
   theme_bw()
 ```
+
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/30%20lm.png)
+
 
 Seems like we can't see any significant changes, our regression line looks similiar for all areas, and only model for common words and verbs can show us some curves. 
 
@@ -530,6 +566,8 @@ We see, that our normalized PCA components describes 60% of information. We can 
 ```
 plot(scipop.pca2)
 ```
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/31%20pca.png)
+
 Let's check for some hidden clusters in our data.
 
 
@@ -557,6 +595,11 @@ scipop_dist %>%
   theme_bw()
   
 ```
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/32%20pca.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/33%20pca.png)
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/34%20pca.png)
+
+
 
 Doesn't seems like they really exist. Let's check for vectors:
 
@@ -570,6 +613,8 @@ autoplot(scipop.pca2,
   theme_bw()
   
 ```
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/35%20vectors.png)
+
 
 Looks very dirty, but we can somehow recognize some of our variables, which were close to each other in our previous experiments.
 
@@ -581,6 +626,7 @@ Looks very dirty, but we can somehow recognize some of our variables, which were
 ```famd=FAMD(scipop[,1:3])
 plot(famd,choix='quanti')
 ```
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/36%20fm.png)
 
 The only useful plot shows distribution for thems, areas and sources.
 
