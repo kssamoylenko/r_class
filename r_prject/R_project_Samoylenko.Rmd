@@ -52,7 +52,7 @@ scipop <- read.csv(file = "C:/Users/Ksenia/Documents/R/scipop_areas.csv", sep = 
 ```
 
 ### Thems distribution in areas
-Area ‘exact’ includes physics, math and spase, ‘nature’ - Biology, nature, chemistry, ‘humanity’ – culture, history, society, language, psychology. Technology and news were left as it is.
+Area "exact" includes physics, math and spase, ‘nature’ - Biology, nature, chemistry, ‘humanity’ – culture, history, society, language, psychology. Technology and news were left as it is.
 
 ```
 scipop %>%
@@ -104,6 +104,7 @@ The most clear difficulty measures we have - readability indexes. Let's vizualis
 scipop%>%
   ggplot(aes(x=area, y=FRE, fill=theme)) + 
   geom_boxplot(alpha=0.3)+
+  geom_hline(yintercept = mean(scipop$FRE), linetype = 2)+
   theme_bw()+
   coord_flip()+
   labs(title = "Science-popular texts analysis", x = "Area", y = "FRE score")
@@ -112,6 +113,7 @@ scipop%>%
 scipop%>%
   ggplot(aes(x=area, y=DCH, fill=theme)) + 
   geom_boxplot(alpha=0.3)+
+  geom_hline(yintercept = mean(scipop$DCH), linetype = 2)+
   theme_bw()+
   coord_flip()+
   labs(title = "Science-popular texts analysis", x = "Area", y = "DCH score")
@@ -119,6 +121,7 @@ scipop%>%
 scipop%>%
   ggplot(aes(x=area, y=CLI, fill=theme)) + 
   geom_boxplot(alpha=0.3)+
+  geom_hline(yintercept = mean(scipop$CLI), linetype = 2)+
   theme_bw()+
   coord_flip()+
   labs(title = "Science-popular texts analysis", x = "Area", y = "CLI score")
@@ -133,24 +136,19 @@ Here we can observe, that somme differnces in readability score are more exploci
 Common words usually covers about 80% of texts in russian. We suppose, that it's true for easy texts, and for difficult that percentage is less. The same is about "talk" words, meanwhile their ratio is usually smaller. Likewise we want to check, if our source has any difference in usage of such kind of words and check it's correlation with readability scores.
 
 ```
-scipop %>%
-  ggplot(aes(common.words, FRE, colour = source))+
-  geom_point(size = 3)+
-  theme_bw()+
-  labs(title = "Science-popular texts analysis", x = "Common words percentage", y = "")
 
 
 scipop %>%
   ggplot(aes(common.words, CLI, colour = source))+
   geom_point(size = 3)+
   theme_bw()+
-  labs(title = "Science-popular texts analysis", x = "Common words percentage", y = "")
+  labs(title = "Science-popular texts analysis", x = "Common words percentage", y = "CLI")
 
 scipop %>%
   ggplot(aes(common.words, CLI, colour = area))+
   geom_point(size = 3)+
   theme_bw()+
-  labs(title = "Science-popular texts analysis", x = "Common words percentage", y = "")
+  labs(title = "Science-popular texts analysis", x = "Common words percentage", y = "CLI")
   
 ```
 In this polts we can see, that it's hard to find any special in using common words for media and different areas, perhaps only few texts about technologyes and|or from geektimes are more complex, than others. But we see, that the more common words are in texts, the less is their readability score, which means that there is correlation between this variables.
@@ -247,6 +245,10 @@ sci_correlations <- cor(scipop_num)
 
 sci_correlations <- round(sci_correlations,2)
 
+sci_correlations
+
+corrplot(sci_correlations, method="circle", tl.col = "black", col=brewer.pal(n=8, name="PuBuGn"))
+
 ```
 
 Here we can see, that there are few hightly correlated groups. Correlations with general and average variables are obvious, just like correlations between readability scores and variables in which they are based, Interesting, that not all readability indexes are higtly correlated. There is a small dependency for nouns and common words with other variables. We suppose, that we can abonden some quantitative metrics and analyse our data without any loss.
@@ -280,152 +282,203 @@ Residual standard error: 70.57 on 1025 degrees of freedom
 Multiple R-squared:  0.4761,	Adjusted R-squared:  0.4756 
 F-statistic: 931.3 on 1 and 1025 DF,  p-value: < 2.2e-16
 
-plot(scipop_num$sentences,scipop_num$words,col = "blue",
-     abline(lm(scipop_num$words~scipop_num$sentences)),cex = 1.3,pch = 16)
-
-```
-
-It was obvious. But what's about variables which don't have strong correlation?
-
-
-``` 
-relation1 <- lm(scipop_num$area~scipop_num$theme)
-summary(relation1)
-
-Call:
-lm(formula = scipop_num$area ~ scipop_num$theme)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--1.9423 -0.9033  0.4481  1.2139  2.0187 
-
-Coefficients:
-                 Estimate Std. Error t value Pr(>|t|)    
-(Intercept)      2.473809   0.074835  33.057  < 2e-16 ***
-scipop_num$theme 0.039041   0.009064   4.307 1.81e-05 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 1.298 on 1025 degrees of freedom
-Multiple R-squared:  0.01778,	Adjusted R-squared:  0.01682 
-F-statistic: 18.55 on 1 and 1025 DF,  p-value: 1.811e-05
-
-plot(scipop_num$theme,scipop_num$area,col = "blue",
-  abline(lm(scipop_num$area~scipop_num$theme)),cex = 1.3,pch = 16)
-
-```
-
-
-```
-relation2 <- lm(scipop_num$nouns~scipop_num$verbs)
-summary(relation2)
-
-plot(scipop_num$verbs,scipop_num$nouns,col = "blue",
-     abline(lm(scipop_num$nouns~scipop_num$verbs)),cex = 1.3,pch = 16)
+scipop_num %>% 
+  ggplot(aes(sentences, words))+
+  geom_point(aes(colour = FRE))+
+  scale_colour_gradient(low = "green")+
+  geom_smooth(method='lm')+
+  theme_bw()
+  
 
 
 ```
 
-Seems like there's no any interesting dependences.
-
-```
-relation4 <- lm(scipop_num$theme~scipop_num$FRE)
-summary(relation4)
-
-plot(scipop_num$theme,scipop_num$FRE,col = "blue",
-     abline(lm(scipop_num$FRE~scipop_num$theme)),cex = 1.3,pch = 16)
-
-relation5 <- lm(scipop_num$theme~scipop_num$DCH)
-summary(relation5)
-
-plot(scipop_num$theme,scipop_num$DCH,col = "blue",
-     abline(lm(scipop_num$DCH~scipop_num$theme)),cex = 1.3,pch = 16)
-
-```
-
-Let's check POS regressions.
+It was obvious. And we can see, that the shortest texts are not the easiest. Let's check POS regressions.
 
 
 ```
-plot(scipop_num$verbs,scipop_num$nouns,col = "blue",
-     abline(lm(scipop_num$nouns~scipop_num$verbs)),cex = 1.3,pch = 16)
+scipop_num %>% 
+  ggplot(aes(verbs, nouns))+
+  geom_point(aes(colour = prepositions))+
+  scale_colour_gradient(low = "green")+
+  geom_smooth(method='lm')+
+  theme_bw()  
 
-plot(scipop_num$verbs,scipop_num$conjs,col = "blue",
-     abline(lm(scipop_num$conjs~scipop_num$verbs)),cex = 1.3,pch = 16)
+scipop_num %>% 
+  ggplot(aes(verbs, common.words))+
+  geom_point(aes(colour = prepositions))+
+  scale_colour_gradient(low = "orange")+
+  geom_smooth(method='lm', colour = 'orange')+
+  theme_bw()
      
-plot(scipop_num$verbs,scipop_num$common.words,col = "blue",
-     abline(lm(scipop_num$common.words~scipop_num$verbs)),cex = 1.3,pch = 16)
-
-
-plot(scipop_num$nouns,scipop_num$common.words,col = "blue",
-     abline(lm(scipop_num$common.words~scipop_num$nouns)),cex = 1.3,pch = 16)
-
-```
-We can see a very interesting regression line predicting common words. 
-
+     
+scipop_num %>% 
+  ggplot(aes(nouns, common.words))+
+  geom_point(aes(colour = prepositions))+
+  scale_colour_gradient(low = "orange")+
+  geom_smooth(method='lm', colour = 'orange')+
+  theme_bw()
+          
 
 ```
-plot(scipop_num$source,scipop_num$common.words,col = "blue",
-     abline(lm(scipop_num$common.words~scipop_num$source)),cex = 1.3,pch = 16)
+The bigger is number of nouns, the less prepositions we have. On the second plot we can clearly see, that with growing of common words text become easier and numaer of nouns is decreasing. It's a very important observation.
 
-relation7 <- lm(scipop_num$theme~scipop_num$common.words)
-summary(relation7)
-
-plot(scipop_num$theme,scipop_num$common.words,col = "blue",
-     abline(lm(scipop_num$common.words~scipop_num$theme)),cex = 1.3,pch = 16)
+```
+scipop_num %>% 
+  ggplot(aes(FRE, common.words))+
+  geom_point(aes(colour = nouns))+
+  scale_colour_gradient(low = "violet")+
+  geom_smooth(method='lm', colour = 'red')+
+  theme_bw()
+          
+          
+scipop_num %>% 
+  ggplot(aes(DCH, common.words))+
+  geom_point(aes(colour = nouns))+
+  scale_colour_gradient(low = "violet")+
+  geom_smooth(method='lm', color = "red")+
+  theme_bw()
      
 ```
 
-And at last, let's check regression for readability score and common words:
 
-```
-plot(scipop_num$FRE,scipop_num$common.words,col = "blue",
-     abline(lm(scipop_num$common.words~scipop_num$FRE)),cex = 1.3,pch = 16)
-
-plot(scipop_num$DCH,scipop_num$common.words,col = "blue",
-     abline(lm(scipop_num$common.words~scipop_num$DCH)),cex = 1.3,pch = 16)
-
-```
-
-We can confirm our previous observation, that the easier text is, the more common words in contents. 
+We can confirm some of our previous observation: that the easier text is, the more common words in contents. And there are some POS-dependences. 
 
 Let's try some advanced models. We want to use mixes-effect model to improve our results.
 
 #### 4.2. Random effect model
 
 ```
-fit2=lmer(verbs~common.words+(1|source),data=scipop)
+fit2=lmer(FRE~nouns+(1|theme),data=scipop)
 summary(fit2)
 
-scipop_num$model=predict(fit2)
+scipop$model2=predict(fit2)
 
-scipop_num %>% 
-  ggplot(aes(common.words, verbs))+
-  geom_point(aes(color=theme))+
-  facet_wrap(~source)+
-  geom_line(aes(verbs,model))
+Linear mixed model fit by REML ['lmerMod']
+Formula: FRE ~ nouns + (1 | theme)
+   Data: scipop
 
+REML criterion at convergence: 8143.3
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.79681 -0.63029  0.02876  0.75174  2.30117 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ theme    (Intercept)   0.0     0.0    
+ Residual             163.9    12.8    
+Number of obs: 1027, groups:  theme, 13
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)   58.941      2.394   24.62
+nouns       -164.284      8.236  -19.95
+
+Correlation of Fixed Effects:
+      (Intr)
+nouns -0.986
+
+```
+```
+scipop%>% 
+  ggplot(aes(nouns, FRE))+
+  geom_point(aes(color=FRE))+
+  facet_wrap(~area)+
+  geom_line(aes(nouns,model2))+
+  theme_bw()
+
+```
+
+
+```fit3=lmer(FRE~verbs+(1|theme),data=scipop)
+summary(fit3)
+
+scipop$model3=predict(fit3)
+
+Linear mixed model fit by REML ['lmerMod']
+Formula: FRE ~ verbs + (1 | theme)
+   Data: scipop
+
+REML criterion at convergence: 8462.3
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.9316 -0.5685  0.0745  0.7034  2.2784 
+
+Random effects:
+ Groups   Name        Variance  Std.Dev. 
+ theme    (Intercept) 3.605e-13 6.004e-07
+ Residual             2.243e+02 1.498e+01
+Number of obs: 1027, groups:  theme, 13
+
+Fixed effects:
+             Estimate Std. Error t value
+(Intercept)   14.6654     0.8695  16.866
+verbs       -146.0567    38.2265  -3.821
+
+Correlation of Fixed Effects:
+      (Intr)
+verbs -0.843
+
+```
+
+
+```
+scipop%>% 
+  ggplot(aes(verbs, FRE))+
+  geom_point(aes(color=FRE))+
+  facet_wrap(~area)+
+  geom_line(aes(verbs,model3))+
+  theme_bw()
   
 ```
 
-lets check fo FRE
 
 ```
+fit4=lmer(common.words~verbs+(1|theme),data=scipop)
+summary(fit4)
 
-fit3=lmer(FRE~common.words+(1|area),data=scipop)
-summary(fit3)
+scipop$model4=predict(fit4)
 
-scipop_num$model1=predict(fit3)
 
-scipop_num %>% 
-  ggplot(aes(common.words, FRE))+
-  geom_point(aes(color=area))+
-  facet_wrap(~source)+
-  geom_line(aes(FRE,model1))
+Linear mixed model fit by REML ['lmerMod']
+Formula: common.words ~ verbs + (1 | theme)
+   Data: scipop
 
+REML criterion at convergence: 7266.2
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.5412 -0.5385  0.1484  0.7190  1.7760 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ theme    (Intercept)  0.3041  0.5515  
+ Residual             69.6157  8.3436  
+Number of obs: 1027, groups:  theme, 13
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  71.6359     0.5152 139.047
+verbs       -90.6136    21.3105  -4.252
+
+Correlation of Fixed Effects:
+      (Intr)
+verbs -0.791
 ```
 
-Seems like even mixes-effect model can't give us an answer. 
+
+```
+scipop%>% 
+  ggplot(aes(verbs, common.words))+
+  geom_point(aes(color=common.words))+
+  facet_wrap(~area)+
+  geom_line(aes(verbs,model4))+
+  theme_bw()
+```
+
+Seems like we can't see any significant changes, our regression line looks similiar for all areas, and only model for common words and verbs can show us some curves. 
 
 ### 5. PCA and variables dependences
 
@@ -433,45 +486,12 @@ We suppose that PCA (principal component analysis) help us with our huge number 
 
 
 ```
+
+scipop <- read.csv(file = "C:/Users/Ksenia/Documents/R/scipop_areas.csv", sep = ",", encoding = "UTF-8")
+
 scipop2 <- scipop[ -c(1:3) ]
 
-scipop.pca <- prcomp(scipop2)
-
-summary(summary)
-
-Importance of components:
-                           PC1      PC2     PC3     PC4    PC5     PC6
-Standard deviation     669.059 53.08975 28.4995 17.8113 6.8161 4.98493
-Proportion of Variance   0.991  0.00624  0.0018  0.0007 0.0001 0.00006
-Cumulative Proportion    0.991  0.99726  0.9991  0.9998 0.9999 0.99992
-                           PC7     PC8     PC9    PC10  PC11   PC12  PC13
-Standard deviation     4.07058 3.52806 2.03348 1.52826 1.024 0.8414 0.675
-Proportion of Variance 0.00004 0.00003 0.00001 0.00001 0.000 0.0000 0.000
-Cumulative Proportion  0.99995 0.99998 0.99999 0.99999 1.000 1.0000 1.000
-                         PC14   PC15   PC16    PC17    PC18    PC19    PC20
-Standard deviation     0.4469 0.2199 0.1518 0.03218 0.02391 0.01899 0.01767
-Proportion of Variance 0.0000 0.0000 0.0000 0.00000 0.00000 0.00000 0.00000
-Cumulative Proportion  1.0000 1.0000 1.0000 1.00000 1.00000 1.00000 1.00000
-                          PC21    PC22     PC23     PC24     PC25      PC26
-Standard deviation     0.01352 0.01062 0.002539 0.002473 0.002282 4.559e-05
-Proportion of Variance 0.00000 0.00000 0.000000 0.000000 0.000000 0.000e+00
-Cumulative Proportion  1.00000 1.00000 1.000000 1.000000 1.000000 1.000e+00
-
-
-```
-
-We can see, that only two PC variables can describe all our data. But is it correct?
-
-
-```
-plot(scipop.pca)
-```
-
-We can see, that our first component has very big dispersion. We should normalize our data.
-
-
-```
-scipop.pca2 <- prcomp(scipop2, scale = TRUE)
+scipop.pca <- prcomp(scipop2, scale = TRUE)
 
 summary(scipop.pca2)
 
@@ -499,12 +519,12 @@ Cumulative Proportion  1.0000000
 
 ```
 
-Now we see, that our normalized PCA components describes 60% of information. We can try to work with it.
+We see, that our normalized PCA components describes 60% of information. We can try to work with it.
 
 ```
 plot(scipop.pca2)
 ```
-Let's check for some hidden clusters in our daata.
+Let's check for some hidden clusters in our data.
 
 
 ```
@@ -556,10 +576,9 @@ Looks very dirty, but we can somehow recognize some of our variables, which were
 plot(famd,choix='quanti')
 ```
 
-Some of them seems to be nice, but difficult for intepretation.
+The only useful plot shows distribution for thems, areas and sources.
 
-
-###6. Difficulty distribution
+### 6. Difficulty distribution
 
 We have a very tangled corpus of data, full of huge amount of variabled. We tryed to find features, which can be useful in prediction text's difficulty and find differences between different thems of texts. Some of our variables are hightly correlated which is obvious, but we found some interesting regularities, for example, texts about technology, chemistry and psychology are knocked out from the general flow of those. Our hypothesis about difference between media should be rejected, because, except polit.ru, they all have the same distribution, but different thems displayed differently. Some of our observations are contradictories, and it can explain our fall with advanced models.
 
