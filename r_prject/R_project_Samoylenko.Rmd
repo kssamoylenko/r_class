@@ -6,55 +6,562 @@ output: pdf_document
 ---
 
 
-### Quantitative features in science-popular texts: text difficulty
+## Quantitative features in science-popular texts: text difficulty
 
-# Materials
+### Materials
 1027 texts and features (csv)
 
-Introduction
-Science-popular media are really widespread and encompasses all fields of science. I wanted to compare how texts from russian popular science media differ from each other. My researched based on readability studies and suppose exploring a distribution of different readability features with data visualization methods. I have a corpus, which consist of articles and lectures scripts from the most popular scientifical projects in Russia: N+1, postnauka, indicator, polit.ru, cherdak and geektimes.Totally it's 1027 texts. For each text we have 29 variables. The most important for us are: source (media), theme and area. As a rival forms here presented POS-using in different areas and media and readability indexes in the same fields. 
+### Introduction
+Science-popular media are really widespread and encompasses all fields of science. I wanted to compare how texts from russian popular science media differ from each other. My researched based on readability studies and suppose exploring a distribution of different readability features with data visualization methods. I have a corpus, which consist of articles and lectures scripts from the most popular scientifical projects in Russia: N+1, postnauka, indicator, polit.ru, cherdak and geektimes.Totally it's 1027 texts. For each text we have 29 variables. The most important for us are categorical variables: source (media), theme and area. As a rival forms here presented POS-using in different areas and media and readability indexes in the same fields. 
 
-Research hypothesis
+### Research hypothesis
 Our main hypothesis supposes, that texts difficulty depends on it's theme: texts about humanities studies are easier than about exact and nature studies.
 To test this hypothesis, we mark our texts with two types of features: theme - smaller unit, where there are special tags for language, culture, physics, math and so on. Area tags are more global and join all small tags. Special types of tags are "technology" and "news", because they aren't suit well for any of other tags or areas.
 Additional hypothesis is that our media has different level of difficulty. 
 
-Data
-Our data is collection of texts on Russian, sourced from online-media devoted to science. It includes articles, news, lecture scripts. Our hypotheses we going to explore with readability features. Totally we have 26 variables, which should help us in this research. For each text we used four groups of features: 
-1) quantitative features: number of words. sentences, average number of words in sentence, syllabs and chars;
-2) readability indexes: FRE, GF, FKG, SMOG, Coliman-Liay, DCH-index. They are bases on quantitative features and fixed for Russian language (cause they were elaborate for English). We suppose, that the bigger is the value of index (except FRE, which is reverse), the more difficult is text.
-3) dictionaries: all texts were compared with lists of common words, rude words, talks and measures (SI-prefixes), sourced from Internet, and we get a percentage of each group of words for each text. We suppose that easy text has a big part of common, talks and rude words, and difficult text is difficult, because it has a lot of SI-prefixes and contain less common and talks words. Moreover we hope, that our research shows that exact science texts contents more ‘measures’.
-4) part-of-speech: we suppose, that text difficulty for reader depends on number of verbs, prepositions and nouns. Easy texts has more verbs, prepositions, and difficult - more nouns. Moreover we wonder, if some special genre like news contains another POS distribution, than scientific texts. 
-Part-of-speech and ‘dictionaries’ values are presented as their percentage in text.
+### Data
+Our data is collection of texts on Russian, sourced from online-media devoted to science. It includes articles, news, lecture scripts. We going to explore  Our hypotheses with readability features. Totally we have 26 quantitative variables, which should help us in this research. For each text we used four groups of features: 
+* quantitative features: number of words, sentences, average number of words in sentence, syllabs and chars, and so on;
+* readability indexes: FRE, GF, FKG, SMOG, Coliman-Liay, DCH-index. They are based on quantitative features and fixed for Russian language (cause they were elaborate for English). We suppose that the bigger is the value of index (except FRE, which is reverse), the more difficult is text.
+* dictionaries: all texts were compared with lists of common words, rude words, talks and "measures" (SI-prefixes), sourced from Internet, and we get a percentage of each group of words for each text. We suppose that easy text has a big part of common, talks and rude words, and difficult text is difficult, because it has a lot of SI-prefixes and contain less common and talks words. Moreover we hope, that our research shows that exact science texts contents more ‘measures’.
+* part-of-speech: we suppose, that text difficulty for reader depends on number of verbs, prepositions and nouns. Easy texts has more verbs, prepositions, and difficult - more nouns. Moreover we wonder, if some special genre like news contains another POS distribution, than scientific texts. 
+Part-of-speech and "dictionaries" values are presented as their percentage in text.
 
-Data collection and annotation
+### Data collection and annotation
 All texts were obtained by the forces of project “Popular Science Texts Compling research”. All types of variable were get by my Python module; variables “area” and “theme” were annotated manually. 
-Area and thems
-Area ‘exact’ includes physics, math and spase
-‘nature’ - Biology, nature, chemistry
-‘humanity’ – culture, history, society, language, psychology
-R libraries
 
 
-Descriptive analysis
+###R libraries
 
-Correlations
+``` 
+library(magrittr)
+library(tidyverse)
+library(ggplot2)
+library(reshape2)
+library(plotly)
+library(lme4)
+library(ggfortify)
+library(Rtsne)
+library(caret)
+library(corrplot)
+library(RColorBrewer)
+library(Hmisc)
+library(FactoMineR)
+
+scipop <- read.csv(file = "C:/Users/Ksenia/Documents/R/scipop_areas.csv", sep = ",", encoding = "UTF-8")
+```
+
+### Thems distribution in areas
+Area ‘exact’ includes physics, math and spase, ‘nature’ - Biology, nature, chemistry, ‘humanity’ – culture, history, society, language, psychology. Technology and news were left as it is.
+
+```
+scipop %>%
+  ggplot(aes(area, fill = theme))+
+  geom_bar(stat="count")+
+  theme_bw()+
+  labs(title = "Science-popular texts analysis", x = "Area", y = "")
+  
+```
+
+### 1. Descriptive analysis
+#### 1.1 Thems, areas and sources
+
+First of all, we want to explore how our text are distributed by source, thems and area. Let's do this!
+
+```
+scipop %>%
+  ggplot(aes(theme, fill = source))+
+  geom_bar(stat="count")+
+  theme_bw()+
+  labs(title = "Science-popular texts analysis", x = "Theme", y = "")+
+  scale_fill_brewer(palette="Accent")
 
 
-Regressions
+scipop %>%
+  ggplot(aes(source, fill = area))+
+  geom_bar(stat="count")+
+  theme_bw()+
+  labs(title = "Science-popular texts analysis", x = "Media", y = "")+
+  scale_fill_brewer(palette="Accent")
 
-1.1	Theme by source and reverse
-1.2	Difficult by theme|area; by source
-1.3	POS by diff and reverse
+scipop %>%
+  ggplot(aes(area, fill = source))+
+  geom_bar(stat="count")+
+  theme_bw()+
+  labs(title = "Science-popular texts analysis", x = "Area", y = "")+
+  scale_fill_brewer(palette="Accent")
+  
+```
+Here we already can make some interesting observations. We intentionally reduced number of texts from Зolit.ru because it was very resource-intensive to process them because of their length. 
+Biology is the most popular theme, and we can clearly see that Cherdak is really highly specialized on it. Technology is the most popular theme for Geektimes, and news - for indicator. Generally, Postnauka covers the most part of "humanity" texts and N+1 - of "exact" studies.
+We suppose that this sample is sufficiently representative and shows real thems distribution in our sources. 
+
+#### 1.2 Difficulty distribution
+
+The most clear difficulty measures we have - readability indexes. Let's vizualise distribution of part of them for our thems and sources. 
+
+```
+scipop%>%
+  ggplot(aes(x=area, y=FRE, fill=theme)) + 
+  geom_boxplot(alpha=0.3)+
+  theme_bw()+
+  coord_flip()+
+  labs(title = "Science-popular texts analysis", x = "Area", y = "FRE score")
 
 
-At least two multi-factor analysis techniques should be demonstrated in the paper
-PCA and variables dependences
+scipop%>%
+  ggplot(aes(x=area, y=DCH, fill=theme)) + 
+  geom_boxplot(alpha=0.3)+
+  theme_bw()+
+  coord_flip()+
+  labs(title = "Science-popular texts analysis", x = "Area", y = "DCH score")
+
+scipop%>%
+  ggplot(aes(x=area, y=CLI, fill=theme)) + 
+  geom_boxplot(alpha=0.3)+
+  theme_bw()+
+  coord_flip()+
+  labs(title = "Science-popular texts analysis", x = "Area", y = "CLI score")
+```
+
+Here we can observe, that somme differnces in readability score are more explocit when we check them in relation to source. For example, texts about technologyes from Postnauka are easier, than from another media; in polit.ru nature texts are more difficult, than about humanities (this fact is the first confirmation for one of our hypothesis.) Bit generally, there is no difference between our media in readability score, only in some special fields of science. 
 
 
-Difficulty distribution
+#### 1.3 Common and talk words in science and media
 
 
+Common words usually covers about 80% of texts in russian. We suppose, that it's true for easy texts, and for difficult that percentage is less. The same is about "talk" words, meanwhile their ratio is usually smaller. Likewise we want to check, if our source has any difference in usage of such kind of words and check it's correlation with readability scores.
+
+```
+scipop %>%
+  ggplot(aes(common.words, FRE, colour = source))+
+  geom_point(size = 3)+
+  theme_bw()+
+  labs(title = "Science-popular texts analysis", x = "Common words percentage", y = "")
+
+
+scipop %>%
+  ggplot(aes(common.words, CLI, colour = source))+
+  geom_point(size = 3)+
+  theme_bw()+
+  labs(title = "Science-popular texts analysis", x = "Common words percentage", y = "")
+
+scipop %>%
+  ggplot(aes(common.words, CLI, colour = area))+
+  geom_point(size = 3)+
+  theme_bw()+
+  labs(title = "Science-popular texts analysis", x = "Common words percentage", y = "")
+  
+```
+In this polts we can see, that it's hard to find any special in using common words for media and different areas, perhaps only few texts about technologyes and|or from geektimes are more complex, than others. But we see, that the more common words are in texts, the less is their readability score, which means that there is correlation between this variables.
+
+
+But we can compare our variables this way for a relly long time. May be we can get this information more compactly?
+
+### 2. Data summary
+
+First of all, we should look at this:
+```
+scipop <- scipop[-3]
+summary(scipop)
+```
+```
+   area            theme           source      sentences         words           chars         syllabs      
+ exact     :215   biology   :220   cherdak  :200   Min.   : 4.00   Min.   : 92.0   Min.   : 775   Min.   : 303.0  
+ humanity  :244   technology:154   geektimes:199   1st Qu.: 9.00   1st Qu.:233.0   1st Qu.:1629   1st Qu.: 623.0  
+ nature    :310   news      :104   indicator:200   Median :12.00   Median :289.0   Median :1982   Median : 758.0  
+ news      :104   space     :101   nplus    :198   Mean   :12.59   Mean   :298.0   Mean   :2055   Mean   : 788.2  
+ technology:154   physics   : 99   politru  : 30   3rd Qu.:15.00   3rd Qu.:352.5   3rd Qu.:2428   3rd Qu.: 933.0  
+                  culture   : 74   postnauka:200   Max.   :30.00   Max.   :740.0   Max.   :4886   Max.   :1881.0  
+                  (Other)   :275                                                                                  
+   diff.words     avg.word.lenght avg.sentence.lenght avg.sent.length.chars avg.syllabs.in.word avg.syllabs.in.sent
+ Min.   : 32.00   Min.   :5.860   Min.   :11.62       Min.   : 94.73        Min.   :2.240       Min.   : 34.58     
+ 1st Qu.: 60.00   1st Qu.:6.540   1st Qu.:19.62       1st Qu.:140.00        1st Qu.:2.500       1st Qu.: 52.57     
+ Median : 75.00   Median :6.860   Median :23.83       Median :164.83        Median :2.640       Median : 63.17     
+ Mean   : 76.97   Mean   :6.997   Mean   :24.94       Mean   :173.03        Mean   :2.682       Mean   : 66.41     
+ 3rd Qu.: 92.00   3rd Qu.:7.310   3rd Qu.:29.18       3rd Qu.:200.29        3rd Qu.:2.820       3rd Qu.: 77.33     
+ Max.   :193.00   Max.   :9.030   Max.   :50.50       Max.   :382.50        Max.   :3.490       Max.   :146.75     
+                                                                                                                   
+ diff.words.persent      FRE              FKG             SMOG            CLI             DCH               GF       
+ Min.   :13.39      Min.   :-44.22   Min.   :11.54   Min.   :12.03   Min.   :17.00   Min.   : 7.030   Min.   :12.47  
+ 1st Qu.:22.32      1st Qu.:  2.28   1st Qu.:16.79   1st Qu.:15.90   1st Qu.:20.88   1st Qu.: 8.740   1st Qu.:18.41  
+ Median :26.18      Median : 13.47   Median :19.05   Median :17.32   Median :22.81   Median : 9.350   Median :20.29  
+ Mean   :26.47      Mean   : 11.86   Mean   :19.41   Mean   :17.54   Mean   :23.49   Mean   : 9.363   Mean   :20.57  
+ 3rd Qu.:30.32      3rd Qu.: 22.19   3rd Qu.:21.45   3rd Qu.:18.90   3rd Qu.:25.30   3rd Qu.:10.030   3rd Qu.:22.64  
+ Max.   :42.21      Max.   : 47.33   Max.   :34.16   Max.   :27.03   Max.   :34.50   Max.   :12.450   Max.   :33.67  
+                                                                                                                     
+  common.words     rude.words      talk.words       measures          nouns            verbs             conjs        
+ Min.   :42.22   Min.   : 0.71   Min.   : 9.86   Min.   :0.0000   Min.   :0.1900   Min.   :0.00000   Min.   :0.01000  
+ 1st Qu.:66.06   1st Qu.: 3.66   1st Qu.:15.64   1st Qu.:0.0000   1st Qu.:0.2500   1st Qu.:0.01000   1st Qu.:0.06000  
+ Median :71.36   Median : 4.98   Median :18.32   Median :0.2600   Median :0.2800   Median :0.02000   Median :0.07000  
+ Mean   :69.80   Mean   : 5.34   Mean   :18.60   Mean   :0.6055   Mean   :0.2866   Mean   :0.01918   Mean   :0.07027  
+ 3rd Qu.:75.71   3rd Qu.: 6.56   3rd Qu.:21.33   3rd Qu.:0.6800   3rd Qu.:0.3150   3rd Qu.:0.03000   3rd Qu.:0.09000  
+ Max.   :85.03   Max.   :15.46   Max.   :30.18   Max.   :8.3600   Max.   :0.4300   Max.   :0.08000   Max.   :0.13000  
+                                                                                                                      
+  prepositions         adjs       
+ Min.   :0.0100   Min.   :0.0800  
+ 1st Qu.:0.1000   1st Qu.:0.1200  
+ Median :0.1200   Median :0.1400  
+ Mean   :0.1045   Mean   :0.1425  
+ 3rd Qu.:0.1300   3rd Qu.:0.1600  
+ Max.   :0.1900   Max.   :0.2400  
+
+```
+
+Here we can get some interesting information about our variables.
+But the most useful for us is the follow function" for plots:
+
+```
+plot.design(scipop)
+
+```
+This function was created for expirements design, and we can get interesting information for each variable distribution in our categories (source, area, theme). It's exactly what we needed!
+
+The most important observations we have with help of this plots:
+
+* chemistry and technology are champions on using difficult (mare than 4 syllb.) words;
+* the biggest average word length - in technology at math;
+* according to FRE score, the easiest theme is psychology, the most difficult - math. The most diffuclt source - polit.ru. FKG correcе this concusion and offer nature as the most difficult theьe and technology as one of the easiest. SMOG mark chemistry as the most difficult (GF and DCH too), CLI - math and technology (it the only index, that estimate polit.ru texts as easy);
+* psychology, society and humaties at all contain more common words, than other. And so do polit.ru! Psychology texts contain appreciable part of talk words;
+* the most score for measures contains humanity texts! Language, psychology, history... May be there was a mistake in Python module?
+* psychology and polit.ru don't use much nouns, chemistry - verbs; there are a lot of conjs in philosophy and chemistry texts and math don't use prepositions.
+
+#### Primary interpretation
+This results seems to be very contrary in some cases, but we can suppose, that texts about technologies and chemistry are in some ways more complex. than others, and humanities, especially psychology (is it even humanity field?) - the most easy. Let's use correlation, regression analysis and PSA to figure out with our bunch of variables.
+
+
+
+### 3. Correlations
+
+Let's look through correlations between our variables.
+To get correlations we can turn our categorical vatianles to numerical. 
+
+```
+must_convert<-sapply(scipop,is.factor) 
+
+scipop_conv <- sapply(scipop[,must_convert],unclass)
+
+scipop_num <- cbind(scipop[,!must_convert], scipop_conv)
+
+sci_correlations <- cor(scipop_num)
+
+sci_correlations <- round(sci_correlations,2)
+
+```
+
+Here we can see, that there are few hightly correlated groups. Correlations with general and average variables are obvious, just like correlations between readability scores and variables in which they are based, Interesting, that not all readability indexes are higtly correlated. There is a small dependency for nouns and common words with other variables. We suppose, that we can abonden some quantitative metrics and analyse our data without any loss.
+
+
+### 4. Regressions
+#### 4.1 Binary Regression
+
+Let's see, if we can get effective regression line for some of our variables.
+
+```
+
+relation2 <- lm(scipop_num$words~scipop_num$sentences)
+summary(relation2)
+
+Call:
+lm(formula = scipop_num$words ~ scipop_num$sentences)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-141.49  -43.81   -3.49   37.35  349.80 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(>|t|)    
+(Intercept)          116.8536     6.3313   18.46   <2e-16 ***
+scipop_num$sentences  14.3867     0.4714   30.52   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 70.57 on 1025 degrees of freedom
+Multiple R-squared:  0.4761,	Adjusted R-squared:  0.4756 
+F-statistic: 931.3 on 1 and 1025 DF,  p-value: < 2.2e-16
+
+plot(scipop_num$sentences,scipop_num$words,col = "blue",
+     abline(lm(scipop_num$words~scipop_num$sentences)),cex = 1.3,pch = 16)
+
+```
+
+It was obvious. But what's about variables which don't have strong correlation?
+
+
+``` 
+relation1 <- lm(scipop_num$area~scipop_num$theme)
+summary(relation1)
+
+Call:
+lm(formula = scipop_num$area ~ scipop_num$theme)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.9423 -0.9033  0.4481  1.2139  2.0187 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      2.473809   0.074835  33.057  < 2e-16 ***
+scipop_num$theme 0.039041   0.009064   4.307 1.81e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.298 on 1025 degrees of freedom
+Multiple R-squared:  0.01778,	Adjusted R-squared:  0.01682 
+F-statistic: 18.55 on 1 and 1025 DF,  p-value: 1.811e-05
+
+plot(scipop_num$theme,scipop_num$area,col = "blue",
+  abline(lm(scipop_num$area~scipop_num$theme)),cex = 1.3,pch = 16)
+
+```
+
+
+```
+relation2 <- lm(scipop_num$nouns~scipop_num$verbs)
+summary(relation2)
+
+plot(scipop_num$verbs,scipop_num$nouns,col = "blue",
+     abline(lm(scipop_num$nouns~scipop_num$verbs)),cex = 1.3,pch = 16)
+
+
+```
+
+Seems like there's no any interesting dependences.
+
+```
+relation4 <- lm(scipop_num$theme~scipop_num$FRE)
+summary(relation4)
+
+plot(scipop_num$theme,scipop_num$FRE,col = "blue",
+     abline(lm(scipop_num$FRE~scipop_num$theme)),cex = 1.3,pch = 16)
+
+relation5 <- lm(scipop_num$theme~scipop_num$DCH)
+summary(relation5)
+
+plot(scipop_num$theme,scipop_num$DCH,col = "blue",
+     abline(lm(scipop_num$DCH~scipop_num$theme)),cex = 1.3,pch = 16)
+
+```
+
+Let's check POS regressions.
+
+
+```
+plot(scipop_num$verbs,scipop_num$nouns,col = "blue",
+     abline(lm(scipop_num$nouns~scipop_num$verbs)),cex = 1.3,pch = 16)
+
+plot(scipop_num$verbs,scipop_num$conjs,col = "blue",
+     abline(lm(scipop_num$conjs~scipop_num$verbs)),cex = 1.3,pch = 16)
+     
+plot(scipop_num$verbs,scipop_num$common.words,col = "blue",
+     abline(lm(scipop_num$common.words~scipop_num$verbs)),cex = 1.3,pch = 16)
+
+
+plot(scipop_num$nouns,scipop_num$common.words,col = "blue",
+     abline(lm(scipop_num$common.words~scipop_num$nouns)),cex = 1.3,pch = 16)
+
+```
+We can see a very interesting regression line predicting common words. 
+
+
+```
+plot(scipop_num$source,scipop_num$common.words,col = "blue",
+     abline(lm(scipop_num$common.words~scipop_num$source)),cex = 1.3,pch = 16)
+
+relation7 <- lm(scipop_num$theme~scipop_num$common.words)
+summary(relation7)
+
+plot(scipop_num$theme,scipop_num$common.words,col = "blue",
+     abline(lm(scipop_num$common.words~scipop_num$theme)),cex = 1.3,pch = 16)
+     
+```
+
+And at last, let's check regression for readability score and common words:
+
+```
+plot(scipop_num$FRE,scipop_num$common.words,col = "blue",
+     abline(lm(scipop_num$common.words~scipop_num$FRE)),cex = 1.3,pch = 16)
+
+plot(scipop_num$DCH,scipop_num$common.words,col = "blue",
+     abline(lm(scipop_num$common.words~scipop_num$DCH)),cex = 1.3,pch = 16)
+
+```
+
+We can confirm our previous observation, that the easier text is, the more common words in contents. 
+
+Let's try some advanced models. We want to use mixes-effect model to improve our results.
+
+#### 4.2. Random effect model
+
+```
+fit2=lmer(verbs~common.words+(1|source),data=scipop)
+summary(fit2)
+
+scipop_num$model=predict(fit2)
+
+scipop_num %>% 
+  ggplot(aes(common.words, verbs))+
+  geom_point(aes(color=theme))+
+  facet_wrap(~source)+
+  geom_line(aes(verbs,model))
+
+  
+```
+
+lets check fo FRE
+
+```
+
+fit3=lmer(FRE~common.words+(1|area),data=scipop)
+summary(fit3)
+
+scipop_num$model1=predict(fit3)
+
+scipop_num %>% 
+  ggplot(aes(common.words, FRE))+
+  geom_point(aes(color=area))+
+  facet_wrap(~source)+
+  geom_line(aes(FRE,model1))
+
+```
+
+Seems like even mixes-effect model can't give us an answer. 
+
+### 5. PCA and variables dependences
+
+We suppose that PCA (principal component analysis) help us with our huge number of variabels: we can work out with 2 or 3 dimensions.
+
+
+```
+scipop2 <- scipop[ -c(1:3) ]
+
+scipop.pca <- prcomp(scipop2)
+
+summary(summary)
+
+Importance of components:
+                           PC1      PC2     PC3     PC4    PC5     PC6
+Standard deviation     669.059 53.08975 28.4995 17.8113 6.8161 4.98493
+Proportion of Variance   0.991  0.00624  0.0018  0.0007 0.0001 0.00006
+Cumulative Proportion    0.991  0.99726  0.9991  0.9998 0.9999 0.99992
+                           PC7     PC8     PC9    PC10  PC11   PC12  PC13
+Standard deviation     4.07058 3.52806 2.03348 1.52826 1.024 0.8414 0.675
+Proportion of Variance 0.00004 0.00003 0.00001 0.00001 0.000 0.0000 0.000
+Cumulative Proportion  0.99995 0.99998 0.99999 0.99999 1.000 1.0000 1.000
+                         PC14   PC15   PC16    PC17    PC18    PC19    PC20
+Standard deviation     0.4469 0.2199 0.1518 0.03218 0.02391 0.01899 0.01767
+Proportion of Variance 0.0000 0.0000 0.0000 0.00000 0.00000 0.00000 0.00000
+Cumulative Proportion  1.0000 1.0000 1.0000 1.00000 1.00000 1.00000 1.00000
+                          PC21    PC22     PC23     PC24     PC25      PC26
+Standard deviation     0.01352 0.01062 0.002539 0.002473 0.002282 4.559e-05
+Proportion of Variance 0.00000 0.00000 0.000000 0.000000 0.000000 0.000e+00
+Cumulative Proportion  1.00000 1.00000 1.000000 1.000000 1.000000 1.000e+00
+
+
+```
+
+We can see, that only two PC variables can describe all our data. But is it correct?
+
+
+```
+plot(scipop.pca)
+```
+
+We can see, that our first component has very big dispersion. We should normalize our data.
+
+
+```
+scipop.pca2 <- prcomp(scipop2, scale = TRUE)
+
+summary(scipop.pca2)
+
+Importance of components:
+                          PC1    PC2    PC3     PC4     PC5     PC6     PC7
+Standard deviation     3.0129 2.5297 1.9594 1.15730 1.04407 0.98000 0.91531
+Proportion of Variance 0.3491 0.2461 0.1477 0.05151 0.04193 0.03694 0.03222
+Cumulative Proportion  0.3491 0.5953 0.7429 0.79446 0.83639 0.87332 0.90555
+                           PC8     PC9    PC10    PC11   PC12    PC13
+Standard deviation     0.81782 0.77565 0.64568 0.55368 0.4173 0.35945
+Proportion of Variance 0.02572 0.02314 0.01603 0.01179 0.0067 0.00497
+Cumulative Proportion  0.93127 0.95441 0.97045 0.98224 0.9889 0.99390
+                          PC14    PC15   PC16    PC17    PC18    PC19
+Standard deviation     0.27961 0.21842 0.1347 0.09953 0.04812 0.03619
+Proportion of Variance 0.00301 0.00183 0.0007 0.00038 0.00009 0.00005
+Cumulative Proportion  0.99691 0.99875 0.9994 0.99982 0.99991 0.99996
+                          PC20    PC21    PC22    PC23      PC24      PC25
+Standard deviation     0.02238 0.01668 0.01238 0.00216 0.0006438 0.0005076
+Proportion of Variance 0.00002 0.00001 0.00001 0.00000 0.0000000 0.0000000
+Cumulative Proportion  0.99998 0.99999 1.00000 1.00000 1.0000000 1.0000000
+                            PC26
+Standard deviation     0.0001194
+Proportion of Variance 0.0000000
+Cumulative Proportion  1.0000000
+
+```
+
+Now we see, that our normalized PCA components describes 60% of information. We can try to work with it.
+
+```
+plot(scipop.pca2)
+```
+Let's check for some hidden clusters in our daata.
+
+
+```
+scipop_dist=cbind(scipop, scipop.pca2$x)
+
+scipop_dist %>% 
+  ggplot(aes(PC1, PC2, color = area))+
+  geom_point()+
+  stat_ellipse()+
+  theme_bw()
+
+
+scipop_dist %>% 
+  ggplot(aes(PC1, PC2, color = theme))+
+  geom_point()+
+  stat_ellipse()+
+  theme_bw()
+
+
+scipop_dist %>% 
+  ggplot(aes(PC1, PC2, color = source))+
+  geom_point()+
+  stat_ellipse()+
+  theme_bw()
+  
+```
+
+Doesn't seems like they really exist. Let's check for vectors:
+
+
+```
+autoplot(scipop.pca2,
+         shape = FALSE,
+         loadings = TRUE,
+         label = TRUE,
+         loadings.label = TRUE)+
+  theme_bw()
+  
+```
+
+Looks very dirty, but we can somehow recognize some of our variables, which were close to each other in our previous experiments.
+
+
+
+#### Fact mixed data
+
+
+```famd=FAMD(scipop[,1:3])
+plot(famd,choix='quanti')
+```
+
+Some of them seems to be nice, but difficult for intepretation.
+
+
+###6. Difficulty distribution
+
+We have a very tangled corpus of data, full of huge amount of variabled. We tryed to find features, which can be useful in prediction text's difficulty and find differences between different thems of texts. Some of our variables are hightly correlated which is obvious, but we found some interesting regularities, for example, texts about technology, chemistry and psychology are knocked out from the general flow of those. Our hypothesis about difference between media should be rejected, because, except polit.ru, they all have the same distribution, but different thems displayed differently. Some of our observations are contradictories, and it can explain our fall with advanced models.
 
 
 
