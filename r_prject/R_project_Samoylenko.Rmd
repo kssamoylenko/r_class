@@ -30,6 +30,9 @@ Part-of-speech and "dictionaries" values are presented as their percentage in te
 ### Data collection and annotation
 All texts were obtained by the forces of project “Popular Science Texts Compling research”. All types of variable were get by my Python module; variables “area” and “theme” were annotated manually. 
 
+**Link to data**
+https://drive.google.com/file/d/1yfSU-ctIMoKg0c4guIWpVd5vQ6YPc9uH/view?usp=sharing
+
 
 ###R libraries
 
@@ -62,6 +65,9 @@ scipop %>%
   labs(title = "Science-popular texts analysis", x = "Area", y = "")
   
 ```
+
+
+!(https://raw.githubusercontent.com/kssamoylenko/r_class/blob/master/r_prject/pict/1%20areas.png)
 
 ### 1. Descriptive analysis
 #### 1.1 Thems, areas and sources
