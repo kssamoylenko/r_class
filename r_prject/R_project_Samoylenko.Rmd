@@ -67,7 +67,7 @@ scipop %>%
 ```
 
 
-!(https://raw.githubusercontent.com/kssamoylenko/r_class/blob/master/r_prject/pict/1%20areas.png)
+!(https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/1%20areas.png)
 
 ### 1. Descriptive analysis
 #### 1.1 Thems, areas and sources
