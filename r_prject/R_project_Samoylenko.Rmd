@@ -242,7 +242,7 @@ plot.design(scipop)
 ![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/18%20common.png)
 ![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/19%20talks.png)
 ![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/20%20nouns.png)
-![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/21%20verbs.png
+![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/21%20verbs.png)
 ![](https://raw.githubusercontent.com/kssamoylenko/r_class/master/r_prject/pict/22%20conjs.png)
 
 This function was created for expirements design, and we can get interesting information for each variable distribution in our categories (source, area, theme). It's exactly what we needed!
