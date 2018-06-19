@@ -34,7 +34,7 @@ All texts were obtained by the forces of project “Popular Science Texts Compli
 https://drive.google.com/file/d/1yfSU-ctIMoKg0c4guIWpVd5vQ6YPc9uH/view?usp=sharing
 
 
-###R libraries
+### R libraries
 
 ``` 
 library(magrittr)
